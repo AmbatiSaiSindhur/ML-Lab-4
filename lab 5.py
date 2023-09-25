@@ -1,90 +1,50 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
-def step_function(z):
-  """Step activation function.
+# Define the step activation function
+def step_activation(x):
+    return 1 if x >= 0 else 0
 
-  Args:
-    z: A real number.
+# Define the perceptron function
+def perceptron(input_data, weights):
+    weighted_sum = np.dot(input_data, weights)
+    output = step_activation(weighted_sum)
+    return output
 
-  Returns:
-    1 if z >= 0, else 0.
-  """
-  if z >= 0:
-    return 1
-  else:
-    return 0
+# Initialize the weights and learning rate
+W0 = 10
+W1 = 0.2
+W2 = -0.75
+learning_rate = 0.05
 
-def perceptron(x, w):
-  """Perceptron with step activation function.
+# Define the input data for AND gate logic
+input_data = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
 
-  Args:
-    x: A 1D numpy array representing the input features.
-    w: A 1D numpy array representing the weights of the perceptron.
-
-  Returns:
-    The output of the perceptron.
-  """
-  z = np.dot(x, w)
-  y = step_function(z)
-  return y
-
-def calculate_error(X, y, w):
-  """Calculates the sum-square-error of the perceptron on the given training data.
-
-  Args:
-    X: A 2D numpy array representing the training input features.
-    y: A 1D numpy array representing the training output labels.
-    w: A 1D numpy array representing the weights of the perceptron.
-
-  Returns:
-    The sum-square-error of the perceptron.
-  """
-  error = 0
-  for i in range(len(X)):
-    x = X[i]
-    t = y[i]
-
-    y_pred = perceptron(x, w)
-
-    error += (t - y_pred)**2
-
-  return error
-
-# Initial weights
-w = np.array([10, 0.2, -0.75])
-
-# Learning rate
-alpha = 0.05
-
-# Training data
-X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-y = np.array([0, 0, 0, 1])
-
-# Error values
-error_values = []
+# Define the target output for AND gate logic
+target_output = np.array([0, 0, 0, 1])
 
 # Train the perceptron
-for epoch in range(1000):
-  for j in range(len(X)):
-    x = X[j]
-    t = y[j]
+converged = False
+epochs = 0
 
-    # Calculate the output of the perceptron
-    y_pred = perceptron(x, w)
+while not converged:
+    error_count = 0
+    
+    for i in range(len(input_data)):
+        input_vector = np.insert(input_data[i], 0, 1) # Add bias term
+        target = target_output[i]
+        output = perceptron(input_vector, [W0, W1, W2])
+        
+        if output != target:
+            error_count += 1
+            W0 += learning_rate * (target - output) * input_vector[0]
+            W1 += learning_rate * (target - output) * input_vector[[1]](#__1)
+            W2 += learning_rate * (target - output) * input_vector[[2]](#__2)
+    
+    epochs += 1
+    
+    if error_count == 0 or epochs >= 1000:
+        converged = True
 
-    # Update the weights
-    w += alpha * (t - y_pred) * x
-
-  # Calculate the error
-  error = calculate_error(X, y, w)
-
-  # Append the error to the error values list
-  error_values.append(error)
-
-# Plot the epochs against the error values
-plt.plot(range(len(error_values)), error_values)
-plt.xlabel("Epoch")
-plt.ylabel("Error")
-plt.title("Error vs. Epochs for Perceptron")
-plt.show()
+# Print the final weights and number of epochs
+print("Final Weights: W0 =", W0, "W1 =", W1, "W2 =", W2)
+print("Number of Epochs:", epochs)
