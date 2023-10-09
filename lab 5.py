@@ -1199,6 +1199,6 @@ plt.figure(figsize=(8, 6))
 plt.bar(['Test Accuracy'], [test_accuracy], color='grey')
 plt.ylim(0, 1)  # Set the y-axis limits between 0 and 1
 plt.title('Classifier Accuracy')
-plt.ylabel('Accuracy')
+plt.ylabel('Accuracy ')
 plt.show()
 
