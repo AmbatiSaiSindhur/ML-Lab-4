@@ -15,4 +15,4 @@ clf.fit(X_train, y_train)
 # Step 4: Retrieve the support vectors
 support_vectors = clf.support_vectors_
 
-# You can now study and analyze the support vectors as needed.
+
