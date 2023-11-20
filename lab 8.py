@@ -66,15 +66,30 @@ print(f"P-value: {p}")
 # In[4]:
 
 
+# Assuming Tr_X and Tr_y are your training features and labels
+Tr_X = df[['age', 'income', 'student', 'credit_rating']]
+Tr_y = df['buys_computer']
+
+# Convert categorical variables to numerical for training
+Tr_X = pd.get_dummies(Tr_X)
+
+# Create and fit Gaussian Naive Bayes model
+model = GaussianNB()
+model.fit(Tr_X, Tr_y)
+
 # Assuming X_test is your test data
 X_test = pd.DataFrame({'age': ['<=30'], 'income': ['medium'], 'student': ['yes'], 'credit_rating': ['fair']})
 
-# Convert categorical variables to numerical
+# Convert categorical variables to numerical for testing
 X_test = pd.get_dummies(X_test)
+
+# Align columns to make sure they match
+X_test = X_test.reindex(columns=Tr_X.columns, fill_value=0)
 
 # Use the trained model to make predictions
 predictions = model.predict(X_test)
 print(predictions)
+
 
 
 # In[ ]:
