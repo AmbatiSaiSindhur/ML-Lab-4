@@ -32,21 +32,23 @@ print(prior_probabilities)
 
 
 from sklearn.naive_bayes import GaussianNB
+import numpy as np
 
-# Assuming Tr_X and Tr_y are your training features and labels
-Tr_X = df[['age', 'income', 'student', 'credit_rating']]
-Tr_y = df['buys_computer']
+# Convert categorical features to numerical values
+df_numeric = pd.get_dummies(df[['age', 'income', 'student', 'credit_rating']])
 
-# Convert categorical variables to numerical
-Tr_X = pd.get_dummies(Tr_X)
+# Split data into features and target
+X = df_numeric.values
+y = df['buys_computer'].values
 
-# Create and fit Gaussian Naive Bayes model
+# Fit a Gaussian Naive Bayes model
 model = GaussianNB()
-model.fit(Tr_X, Tr_y)
+model.fit(X, y)
 
-# Print class conditional densities
-print(model.theta_)  # Means of each feature per class
-print(model.sigma_)   # Variances of each feature per class
+# Get the class conditional densities
+class_conditional_densities = np.exp(model.theta_)
+print("Class Conditional Densities:")
+print(pd.DataFrame(class_conditional_densities, columns=df_numeric.columns))
 
 
 # In[3]:
@@ -66,33 +68,60 @@ print(f"P-value: {p}")
 # In[4]:
 
 
-# Assuming Tr_X and Tr_y are your training features and labels
-Tr_X = df[['age', 'income', 'student', 'credit_rating']]
-Tr_y = df['buys_computer']
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
-# Convert categorical variables to numerical for training
-Tr_X = pd.get_dummies(Tr_X)
+# Convert categorical features to numerical values
+df_numeric = pd.get_dummies(df[['age', 'income', 'student', 'credit_rating']])
 
-# Create and fit Gaussian Naive Bayes model
+# Split data into features and target
+X = df_numeric.values
+y = df['buys_computer'].values
+
+# Split data into training and testing sets
+Tr_X, Te_X, Tr_y, Te_y = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Build and train the Naïve-Bayes classifier
 model = GaussianNB()
 model.fit(Tr_X, Tr_y)
 
-# Assuming X_test is your test data
-X_test = pd.DataFrame({'age': ['<=30'], 'income': ['medium'], 'student': ['yes'], 'credit_rating': ['fair']})
+# Make predictions on the test set
+predictions = model.predict(Te_X)
 
-# Convert categorical variables to numerical for testing
-X_test = pd.get_dummies(X_test)
+# Evaluate accuracy
+accuracy = accuracy_score(Te_y, predictions)
+print("Accuracy:", accuracy)
 
-# Align columns to make sure they match
-X_test = X_test.reindex(columns=Tr_X.columns, fill_value=0)
 
-# Use the trained model to make predictions
+
+
+# In[5]:
+import pandas as pd
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Load your data from the CSV file
+df_numeric = pd.read_csv(r"C:\class\projects\sem 5\Machine Learning\Custom_CNN_Features.csv")
+
+# Assuming 'f8' is the feature and 'f0' is the target
+features = df_numeric[['f8','f10']]
+target = df_numeric['Label']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
+
+# Build and train the Naïve-Bayes classifier
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
 predictions = model.predict(X_test)
-print(predictions)
 
-
-
-# In[ ]:
+# Evaluate accuracy
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy:", accuracy)
 
 
 
